@@ -10,8 +10,10 @@ LICENSE = 'MIT'
 DESC = 'matix has u'
 
 CMD_DESC = 'toggle matix to a buffer'
-CMD_ARGS = ''
-CMD_ARGS_DESC = ''
+CMD_ARGS = '[off | <time>]'
+CMD_ARGS_DESC = '''
+use with no arg or "off" to turn off. with "time" value,
+send to channel at one line per time (in secs)'''
 
 # the algorithm thing
 
@@ -55,12 +57,12 @@ def do_matix(data, remaining_calls):
 
     return weechat.WEECHAT_RC_OK
 
-def add_target(buf):
+def add_target(buf, dur):
     if buf in targets:
         return
 
     tgt = {}
-    tgt['timer'] = weechat.hook_timer(300, 0, 0, 'do_matix', buf)
+    tgt['timer'] = weechat.hook_timer(dur, 0, 0, 'do_matix', buf)
     tgt['cells'] = new_cells()
 
     targets[buf] = tgt
@@ -84,7 +86,16 @@ def toggle_target(buf):
         add_target(buf)
 
 def cmd_matix(data, buf, args):
-    toggle_target(buf)
+    if len(args) == 0 or args.lower() == 'off':
+        cancel_target(buf)
+        return weechat.WEECHAT_RC_OK
+
+    dur = int(float(args) * 1000)
+    if dur < 10:
+        weechat.prnt(buf, 'too fast!')
+        return weechat.WEECHAT_RC_ERROR
+    add_target(buf, dur)
+
     return weechat.WEECHAT_RC_OK
 
 if __name__ == '__main__':
