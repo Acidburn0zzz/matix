@@ -9,6 +9,10 @@ VERSION = '1.0'
 LICENSE = 'MIT'
 DESC = 'matix has u'
 
+CMD_DESC = 'toggle matix to a buffer'
+CMD_ARGS = ''
+CMD_ARGS_DESC = ''
+
 # the algorithm thing
 
 alphabet = '!@#$%^&*()[]{}?+=\\|",'
@@ -85,4 +89,5 @@ def cmd_matix(data, buf, args):
 
 if __name__ == '__main__':
     weechat.register(NAME, AUTHOR, VERSION, LICENSE, DESC, '', '')
-    weechat.hook_command('matix', 'matix', 'matix', 'matix', 'matix', 'cmd_matix', '')
+    weechat.hook_command('matix', CMD_DESC, CMD_ARGS, CMD_ARGS_DESC,
+                         '', 'cmd_matix', '')
