@@ -58,17 +58,20 @@ def do_matix(data, remaining_calls):
     return weechat.WEECHAT_RC_OK
 
 def add_target(buf, dur):
-    if buf in targets:
-        return
-
     tgt = {}
+
+    if buf in targets:
+        tgt = targets[buf]
+        weechat.unhook(tgt['timer'])
+
+    else:
+        targets[buf] = tgt
+        tgt['cells'] = new_cells()
+
+        # call once, since timer won't fire when first set
+        do_matix(buf, 0)
+
     tgt['timer'] = weechat.hook_timer(dur, 0, 0, 'do_matix', buf)
-    tgt['cells'] = new_cells()
-
-    targets[buf] = tgt
-
-    # call once, since timer won't fire when first set
-    do_matix(buf, 0)
 
 def cancel_target(buf):
     if buf not in targets:
